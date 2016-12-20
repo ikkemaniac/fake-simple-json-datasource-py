@@ -73,7 +73,12 @@ class myHandler(BaseHTTPRequestHandler):
 				print(request_headers)
 				print(self.rfile.read(length))
 				print("<----- Request End -----\n")
-				#~ print(json.dumps(data_series))
+				print ("Response:")
+				self.send_response(200)  # OK
+				self.send_header("Access-Control-Allow-Origin", "*")
+				self.end_headers()
+
+				#~ print (self.headers)
 				self.request.sendall(json.dumps(data_series))
 		except IOError:
 			self.send_error(404,'File Not Found: %s' % self.path)
