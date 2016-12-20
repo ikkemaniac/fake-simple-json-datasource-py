@@ -70,8 +70,8 @@ class myHandler(BaseHTTPRequestHandler):
 				request_headers = self.headers
 				content_length = request_headers.getheaders('content-length')
 				length = int(content_length[0]) if content_length else 0
-				print(request_headers)
-				print(self.rfile.read(length))
+				#~ print (self.headers)
+				print(json.dumps(json.loads(self.rfile.read(length)), indent=4))
 				print("<----- Request End -----\n")
 				print ("Response:")
 				self.send_response(200)  # OK
