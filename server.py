@@ -80,6 +80,8 @@ class myHandler(BaseHTTPRequestHandler):
 
 				#~ print (self.headers)
 				self.request.sendall(json.dumps(data_series))
+				#~ print(json.dumps(data_series, indent=2))
+
 		except IOError:
 			self.send_error(404,'File Not Found: %s' % self.path)
 
