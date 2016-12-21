@@ -59,12 +59,20 @@ class myHandler(BaseHTTPRequestHandler):
 				for row in data_series:
 					data.append (row["target"])
 				self.request.sendall(json.dumps(data))
+
+			if self.path=="/annotations":
+				self.send_response(404)
+				self.send_header('Content-type','text/html')
+				self.end_headers()
+				self.wfile.write("NOT Implemented!")
+
 			return
 
 
 		except IOError:
 			self.send_error(404,'File Not Found: %s' % self.path)
 
+	#~ POST requests
 	def do_POST(self):
 		try:
 			#~ When 'query' gets hit return data
