@@ -1,4 +1,7 @@
 #!/usr/bin/python
+'''
+based on code from http://www.acmesystems.it/python_httpd
+'''
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
 import json
