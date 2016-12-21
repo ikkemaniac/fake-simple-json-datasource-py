@@ -37,9 +37,10 @@ def strToTimestamp(sDate):
 	datetime_object = datetime.strptime(sDate, '%Y-%m-%dT%H:%M:%S.%fZ')
 
 	#~ get seconds since epoch
-	millisecTimestamp = int(((datetime_object - datetime(1970,1,1)).total_seconds()*1000))
+	#~ millisecTimestamp = int(((datetime_object - datetime(1970,1,1)).total_seconds()*1000))
+	secTimestamp = int(((datetime_object - datetime(1970,1,1)).total_seconds()))
 	#~ print ('output: ' + str(millisecTimestamp))
-	return millisecTimestamp
+	return secTimestamp
 
 ### Sample data
 ### Timestamps are from 2015-12-22 04:16:00 to 2015-12-22 07:40:00
