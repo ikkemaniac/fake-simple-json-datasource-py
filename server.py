@@ -71,6 +71,22 @@ def db_query_devices(limit = 10):
 		#~ print(data)
 		return data
 
+### Wrapper for querying sqlite db
+###
+def db_query_deviceName(idx):
+	with con:
+		cur = con.cursor()
+		data = []
+		cur.execute("SELECT name from devices where idx = ? order by savetime desc limit 1", (idx,))
+		#~ for row in cur:
+			#~ print (list(row))
+			#~ data.append(list(row))
+
+		data = cur.fetchone()[0]
+
+		#~ print(data)
+		return data
+
 ### convert Grafana datetime string to millisecond unix timestamp
 ### Grafana datetime string input: str '2015-12-22T07:15:43.230Z'
 ### millisecond unix timestamp output: int 1450768543230
@@ -164,10 +180,11 @@ class myHandler(BaseHTTPRequestHandler):
 				#~ loop all requested data sets, throws err on initial graph creation
 				for target in data['targets']:
 					grafana_target = int(target['target'])
+					strgrafana_target = db_query_deviceName(grafana_target)
 					domo_device = grafana_target
 					ds = db_query_data(domo_device, grafana_dataFrom, grafana_dataTo, grafana_limit)
 					#~ data_series = []
-					target_series = {"target": str(grafana_target), "datapoints": list(ds)}
+					target_series = {"target": str(strgrafana_target), "datapoints": list(ds)}
 					data_series.append(target_series)
 
 				#~ Send data
