@@ -20,11 +20,12 @@ import datetime
 PORT_NUMBER = 9999
 ###
 
-epoch = datetime.datetime.utcfromtimestamp(0)
+
+#~ epoch = datetime.datetime.utcfromtimestamp(0)
 #~ current = int(round(time.time() * 1000))
 #~ set date for data series
-def unix_time_millis(dt):
-    return (dt - epoch).total_seconds() * 1000.0
+#~ def unix_time_millis(dt):
+    #~ return (dt - epoch).total_seconds() * 1000.0
 
 
 ### Sample data
