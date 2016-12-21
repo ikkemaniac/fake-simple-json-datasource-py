@@ -15,9 +15,11 @@ from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
 import json
 from datetime import datetime
+import sqlite3
 
 ### Settings
 PORT_NUMBER = 9999
+SQLITE_DB = 'domo-persistant-data.db'
 ###
 
 
@@ -26,6 +28,48 @@ PORT_NUMBER = 9999
 #~ set date for data series
 #~ def unix_time_millis(dt):
     #~ return (dt - epoch).total_seconds() * 1000.0
+
+#~ Create db connection
+con = sqlite3.connect(SQLITE_DB)
+
+### Wrapper for querying sqlite db
+###
+def db_query_data(idx, dataFrom, dataTo, limit):
+	with con:
+		cur = con.cursor()
+		#~ idx=12
+		#~ limit=100
+		#~ datetimeFrom = strToTimestamp('2016-12-20T07:15:43.230Z')
+		datetimeFrom = strToTimestamp(dataFrom)
+		#~ datetimeTo = strToTimestamp('2016-12-20T17:15:43.230Z')
+		datetimeTo = strToTimestamp(dataTo)
+		data = []
+		#~ print("SELECT savetime, value from sensors_numeric where idx=? and savetime >= ? and savetime <= ? limit ?", (idx, datetimeFrom, datetimeTo, limit))
+		cur.execute("SELECT value, (savetime *1000) from sensors_numeric where idx=? and savetime >= ? and savetime <= ? limit ?", (idx, datetimeFrom, datetimeTo, limit))
+		for row in cur:
+			#~ print (list(row))
+			data.append(list(row))
+
+		#~ data = cur.fetchall()
+
+		#~ print(data)
+		return data
+
+### Wrapper for querying sqlite db
+###
+def db_query_devices(limit = 10):
+	with con:
+		cur = con.cursor()
+		data = []
+		cur.execute("SELECT idx from devices limit ?", (limit,))
+		for row in cur:
+			#~ print (list(row))
+			data.append(list(row))
+
+		#~ data = cur.fetchall()
+
+		#~ print(data)
+		return data
 
 ### convert Grafana datetime string to millisecond unix timestamp
 ### Grafana datetime string input: str '2015-12-22T07:15:43.230Z'
@@ -93,24 +137,41 @@ class myHandler(BaseHTTPRequestHandler):
 			#~ When 'query' gets hit return data
 			#~ Grafana's POST data is ignored (for now) and the same data is returned every time.
 			if (self.path == "/query"):
-				data = []
-				print("\n----- Request Start ----->\n")
-				print "POST /query"
+				#~ data = []
+				#~ print("\n----- Request Start ----->\n")
+				#~ print "POST /query"
 				request_headers = self.headers
 				content_length = request_headers.getheaders('content-length')
 				length = int(content_length[0]) if content_length else 0
-				#~ print (self.headers)
-				print(json.dumps(json.loads(self.rfile.read(length)), indent=4))
-				print("<----- Request End -----\n")
-				print ("Response:")
-				
+				print (self.headers)
+				data = json.loads(self.rfile.read(length))
+				print(json.dumps(data, indent=4))
+				#~ print("<----- Request End -----\n")
+				#~ print ("Response:")
+
 				#~ Set headers as required by Grafana
 				self.send_response(200)  # OK
 				self.send_header("Access-Control-Allow-Origin", "*")
 				self.end_headers()
 
+				#~ Get query variables
+				grafana_dataTo = (data['range']['to'])
+				grafana_dataFrom = (data['range']['from'])
+				grafana_limit = int(data['maxDataPoints'])
+				#~ grafana_limit = 10
+
+				data_series = []
+				#~ loop all requested data sets, throws err on initial graph creation
+				for target in data['targets']:
+					grafana_target = int(target['target'])
+					domo_device = grafana_target
+					ds = db_query_data(domo_device, grafana_dataFrom, grafana_dataTo, grafana_limit)
+					#~ data_series = []
+					target_series = {"target": str(grafana_target), "datapoints": list(ds)}
+					data_series.append(target_series)
+
 				#~ Send data
-				#~ print (self.headers)
+				#~ print (data_series)
 				self.request.sendall(json.dumps(data_series))
 				#~ print(json.dumps(data_series, indent=2))
 
