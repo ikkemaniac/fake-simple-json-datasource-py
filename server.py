@@ -14,7 +14,7 @@ Based on code from http://www.acmesystems.it/python_httpd
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
 import json
-import datetime
+from datetime import datetime
 
 ### Settings
 PORT_NUMBER = 9999
@@ -27,6 +27,19 @@ PORT_NUMBER = 9999
 #~ def unix_time_millis(dt):
     #~ return (dt - epoch).total_seconds() * 1000.0
 
+### convert Grafana datetime string to millisecond unix timestamp
+### Grafana datetime string input: str '2015-12-22T07:15:43.230Z'
+### millisecond unix timestamp output: int 1450768543230
+def strToTimestamp(sDate):
+	#~ print ('Input: ' + sDate)
+	#~ 2015-12-22T07:15:43.230Z
+	#~ '%Y-%m-%dT%H:%M:%S.%.3f'
+	datetime_object = datetime.strptime(sDate, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+	#~ get seconds since epoch
+	millisecTimestamp = int(((datetime_object - datetime(1970,1,1)).total_seconds()*1000))
+	#~ print ('output: ' + str(millisecTimestamp))
+	return millisecTimestamp
 
 ### Sample data
 ### Timestamps are from 2015-12-22 04:16:00 to 2015-12-22 07:40:00
