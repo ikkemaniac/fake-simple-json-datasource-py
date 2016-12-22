@@ -161,9 +161,9 @@ class myHandler(BaseHTTPRequestHandler):
 				request_headers = self.headers
 				content_length = request_headers.getheaders('content-length')
 				length = int(content_length[0]) if content_length else 0
-				print (self.headers)
+				#~ print (self.headers)
 				data = json.loads(self.rfile.read(length))
-				print(json.dumps(data, indent=4))
+				#~ print(json.dumps(data, indent=4))
 				#~ print("<----- Request End -----\n")
 				#~ print ("Response:")
 
@@ -196,6 +196,8 @@ class myHandler(BaseHTTPRequestHandler):
 
 		except IOError:
 			self.send_error(404,'File Not Found: %s' % self.path)
+		except:
+			print ("Error")
 
 
 ############################ main ############################
