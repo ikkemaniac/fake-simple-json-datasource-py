@@ -44,8 +44,10 @@ def db_query_data(idx, dataFrom, dataTo, limit):
 		#~ datetimeTo = strToTimestamp('2016-12-20T17:15:43.230Z')
 		datetimeTo = strToTimestamp(dataTo)
 		data = []
-		#~ print("SELECT savetime, value from sensors_numeric where idx=? and savetime >= ? and savetime <= ? limit ?", (idx, datetimeFrom, datetimeTo, limit))
-		cur.execute("SELECT value, (savetime *1000) from sensors_numeric where idx=? and savetime >= ? and savetime <= ? limit ?", (idx, datetimeFrom, datetimeTo, limit))
+		#~ print      ("SELECT value, (savetime *1000) from sensors_numeric where idx="+str(idx)+" and savetime >="+str(datetimeFrom)+" and savetime <="+str(datetimeTo)+" limit "+str(limit))
+		#~ cur.execute("SELECT value, (savetime *1000) from sensors_numeric where idx=? and savetime >= ? and savetime <= ? limit ?", (idx, datetimeFrom, datetimeTo, limit))
+		print      ("SELECT value, (savetime *1000) from sensors_numeric where idx="+str(idx)+" and savetime >="+str(datetimeFrom)+" and savetime <="+str(datetimeTo)+" order by savetime asc")
+		cur.execute("SELECT value, (savetime *1000) from sensors_numeric where idx=? and savetime >= ? and savetime <= ? order by savetime asc", (idx, datetimeFrom, datetimeTo))
 		for row in cur:
 			#~ print (list(row))
 			data.append(list(row))
