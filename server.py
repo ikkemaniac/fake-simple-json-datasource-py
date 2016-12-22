@@ -132,6 +132,12 @@ class myHandler(BaseHTTPRequestHandler):
 
 			#~ When 'search' gets hit return list of available targets
 			elif (self.path == "/search"):
+				print( 'in search')
+				print (self.headers)
+				content_length = request_headers.getheaders('content-length')
+				length = int(content_length[0]) if content_length else 0
+				data = json.loads(self.rfile.read(length))
+				print (json.dumps(data, indent=4))
 				data = []
 				for row in data_series:
 					data.append (row["target"])
