@@ -1,32 +1,33 @@
 #!/usr/bin/python
-'''attach '2016-12-17-04-00-domoticz.db' as toMerge;           
-BEGIN; 
-insert into meter select * from toMerge.meter; 
-insert into percentage select * from toMerge.percentage; 
-COMMIT; 
+'''
+attach '2016-12-17-04-00-domoticz.db' as toMerge;
+BEGIN;
+insert into meter select * from toMerge.meter;
+insert into percentage select * from toMerge.percentage;
+COMMIT;
 detach toMerge;
-attach '2016-12-18-04-00-domoticz.db' as toMerge;           
-BEGIN; 
-insert into meter select * from toMerge.meter; 
-insert into percentage select * from toMerge.percentage; 
-COMMIT; 
+attach '2016-12-18-04-00-domoticz.db' as toMerge;
+BEGIN;
+insert into meter select * from toMerge.meter;
+insert into percentage select * from toMerge.percentage;
+COMMIT;
 detach toMerge;
-attach '2016-12-19-04-00-domoticz.db' as toMerge;           
-BEGIN; 
-insert into meter select * from toMerge.meter; 
-insert into percentage select * from toMerge.percentage; 
-COMMIT; 
+attach '2016-12-19-04-00-domoticz.db' as toMerge;
+BEGIN;
+insert into meter select * from toMerge.meter;
+insert into percentage select * from toMerge.percentage;
+COMMIT;
 detach toMerge;
 
 
 
 
 
-attach 'all.db' as toMerge;           
-BEGIN; 
-insert into sensors_numeric select Date as savetime, DeviceRowID as idx, '2016-01-01 03:45:01' as lastupdate, Value as value from toMerge.meter; 
-insert into sensors_numeric select Date as savetime, DeviceRowID as idx, '2016-01-01 03:45:01' as lastupdate, Percentage as value from toMerge.percentage; 
-COMMIT; 
+attach 'all.db' as toMerge;
+BEGIN;
+insert into sensors_numeric select Date as savetime, DeviceRowID as idx, '2016-01-01 03:45:01' as lastupdate, Value as value from toMerge.meter;
+insert into sensors_numeric select Date as savetime, DeviceRowID as idx, '2016-01-01 03:45:01' as lastupdate, Percentage as value from toMerge.percentage;
+COMMIT;
 detach toMerge;
 
 select * from sensors_numeric order by savetime asc limit 50;
@@ -63,7 +64,7 @@ con = sqlite3.connect('/home/ikke/domo/all.db')
 def db_query_devices(limit = 10):
 	with con:
 		cur = con.cursor()
-		curUpdate = con.cursor()    
+		curUpdate = con.cursor()
 		
 		data = []
 		cur.execute("SELECT ROWID, Date from meter")
