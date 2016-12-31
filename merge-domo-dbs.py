@@ -31,6 +31,22 @@ COMMIT;
 detach toMerge;
 
 select * from sensors_numeric order by savetime asc limit 50;
+
+BEGIN TRANSACTION;
+--remove duplicates, based on savetime and idx
+select count(rowid) from sensors_numeric; --256983 256739
+select count(lastupdate) as c, group_concat(value), * from sensors_numeric  group by idx,savetime order by c desc;
+delete from sensors_numeric where rowid not in (select max(rowid) from sensors_numeric  group by idx,savetime);
+
+--create new table with primary key and copy data into it
+CREATE TABLE IF NOT EXISTS sensors_numeric(savetime INT, idx INT, lastupdate BLOB, value REAL);
+alter table sensors_numeric rename to sensors_numeric_temp;
+CREATE TABLE IF NOT EXISTS sensors_numeric(savetime INT, idx INT, lastupdate BLOB, value REAL, CONSTRAINT aa PRIMARY KEY (savetime, idx));
+insert into sensors_numeric select * from sensors_numeric_temp;
+drop table sensors_numeric_temp;
+vacuum;
+commit;
+
 '''
 
 from datetime import datetime
